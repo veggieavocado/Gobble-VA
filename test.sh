@@ -6,4 +6,4 @@ docker rm -f $(docker ps -a -q)
 
 docker-compose up -d --build
 
-docker exec -it molecular-server pytest -v
+docker exec -it molecular-django pytest -v

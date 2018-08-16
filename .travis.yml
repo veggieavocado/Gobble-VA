@@ -13,11 +13,11 @@ env:
   global:
     - DJANGO_VERSION=2.0
     - TRAVIS=True
-    - RUN_TEST_SCRIPT="docker exec -it molecular-server python -m pytest -n 3 --cov-config .coveragerc --cov=. -v"
+    - RUN_TEST_SCRIPT="docker exec -it molecular-django python -m pytest -n 3 --cov-config .coveragerc --cov=. -v"
 before_script:
   - docker run --name molecular-cache -d -p 127.0.0.1:6379:6379 redis redis-server --requirepass molecularredispassword --appendonly yes
   - docker build -t django-app:testing .
-  - docker run --name molecular-server -d -e DOCKER_CONTAINER=True --link molecular-cache:redis django-app:testing
+  - docker run --name molecular-django -d -e DOCKER_CONTAINER=True --link molecular-cache:redis django-app:testing
 script:
   - ${RUN_TEST_SCRIPT}
 notifications:
