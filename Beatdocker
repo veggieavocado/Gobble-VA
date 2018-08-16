@@ -1,6 +1,10 @@
 FROM python:3.7
 
-RUN apt-get update
+RUN apt-get install -f && \
+    apt-get update && \
+    apt-get install -y g++ openjdk-8-jdk python3-pip python3-dev && \
+    pip3 install JPype1-py3 && \
+    pip3 install konlpy
 
 COPY . /app
 
