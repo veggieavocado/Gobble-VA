@@ -22,6 +22,7 @@ from contents.serializers import (
 
 from utils.paginations import StandardResultPagination
 
+
 # WantedContent view GET POST
 class WantedContentAPIView(generics.ListCreateAPIView):
     queryset = WantedContent.objects.all()
@@ -44,6 +45,7 @@ class WantedContentAPIView(generics.ListCreateAPIView):
             queryset = queryset.filter(location=loaction_by)
         return queryset
 
+
 # WantedContent view PUT DELETE
 class WantedContentDetailsAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = WantedContent.objects.all()
@@ -59,11 +61,13 @@ class WantedUrlAPIView(generics.ListCreateAPIView):
     pagination_class = StandardResultPagination
     filter_backends = [SearchFilter, OrderingFilter]
 
+
 # Wantedurl view PUT DELETE
 class WantedUrlDetailsAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = WantedUrl.objects.all()
     serializer_class = WantedUrlSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
 
 # WantedUrl view GET POST
 class WantedDataAPIView(generics.ListCreateAPIView):
@@ -72,6 +76,7 @@ class WantedDataAPIView(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     pagination_class = StandardResultPagination
     filter_backends = [SearchFilter, OrderingFilter]
+
 
 # Wantedurl view PUT DELETE
 class WantedDataDetailsAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -102,11 +107,13 @@ class NaverContentAPIView(generics.ListCreateAPIView):
             queryset = queryset.filter(type=type_by)
         return queryset
 
+
 # WantedContent view PUT DELETE
 class NaverContentDetailsAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = NaverContent.objects.all()
     serializer_class = NaverContentSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
 
 class NaverDataAPIView(generics.ListCreateAPIView):
     queryset = NaverData.objects.all().order_by('id')
@@ -114,6 +121,7 @@ class NaverDataAPIView(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     pagination_class = StandardResultPagination
     filter_backends = [SearchFilter, OrderingFilter]
+
 
 # Wantedurl view PUT DELETE
 class NaverDataDetailsAPIView(generics.RetrieveUpdateDestroyAPIView):
