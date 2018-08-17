@@ -43,7 +43,7 @@ class NaverContent(models.Model):
     upload_time = models.CharField(max_length=50, blank=True, null=True)
     url = models.CharField(max_length=500, blank=True, null=True, default='')
     content = models.TextField(blank=True, null=True)
-    type = models.CharField(max_length=1, choices=TYPES, blank=True, null=True)
+    data_type = models.CharField(max_length=1, choices=TYPES, blank=True, null=True)
     created = models.DateField(auto_now_add=True)
     updated = models.DateField(auto_now=True)
 
