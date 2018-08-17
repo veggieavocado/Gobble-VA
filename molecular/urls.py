@@ -8,6 +8,9 @@ urlpatterns = [
 
     # API URL
     path('gobble/api/v1/', include('api.urls')),
+
+    # 컨텐츠 URL
+    path('gobble/api/v1/contents/', include('contents.urls')),
 ]
 
 if settings.DEBUG:

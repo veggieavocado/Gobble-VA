@@ -17,6 +17,8 @@ RUN pip3 install --upgrade pip && \
     pip3 install -r requirements.txt
 
 RUN python manage.py makemigrations && \
+    python manage.py makemigrations contents && \
+    python manage.py migrate --database=contents && \
     python manage.py migrate sessions && \
     python manage.py migrate && \
     python manage.py migrate django_celery_results && \

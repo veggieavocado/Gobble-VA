@@ -25,14 +25,14 @@ from utils.paginations import StandardResultPagination
 
 # WantedContent view GET POST
 class WantedContentAPIView(generics.ListCreateAPIView):
-    queryset = WantedContent.objects.all()
+    queryset = WantedContent.objects.using('contents').all()
     serializer_class = WantedContentSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     pagination_class = StandardResultPagination
     filter_backends = [SearchFilter, OrderingFilter]
 
     def get_queryset(self, *args, **kwargs):
-        queryset = WantedContent.objects.all().order_by('id')
+        queryset = WantedContent.objects.using('contents').all().order_by('id')
         title_by = self.request.GET.get('title')
         company_by = self.request.GET.get('company')
         loaction_by = self.request.GET.get('location')
@@ -48,14 +48,14 @@ class WantedContentAPIView(generics.ListCreateAPIView):
 
 # WantedContent view PUT DELETE
 class WantedContentDetailsAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = WantedContent.objects.all()
+    queryset = WantedContent.objects.using('contents').all()
     serializer_class = WantedContentSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 # WantedUrl view GET POST
 class WantedUrlAPIView(generics.ListCreateAPIView):
-    queryset = WantedUrl.objects.all().order_by('id')
+    queryset = WantedUrl.objects.using('contents').all().order_by('id')
     serializer_class = WantedUrlSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     pagination_class = StandardResultPagination
@@ -64,14 +64,14 @@ class WantedUrlAPIView(generics.ListCreateAPIView):
 
 # Wantedurl view PUT DELETE
 class WantedUrlDetailsAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = WantedUrl.objects.all()
+    queryset = WantedUrl.objects.using('contents').all()
     serializer_class = WantedUrlSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 # WantedUrl view GET POST
 class WantedDataAPIView(generics.ListCreateAPIView):
-    queryset = WantedData.objects.all().order_by('id')
+    queryset = WantedData.objects.using('contents').all().order_by('id')
     serializer_class = WantedDataSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     pagination_class = StandardResultPagination
@@ -80,21 +80,21 @@ class WantedDataAPIView(generics.ListCreateAPIView):
 
 # Wantedurl view PUT DELETE
 class WantedDataDetailsAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = WantedData.objects.all()
+    queryset = WantedData.objects.using('contents').all()
     serializer_class = WantedDataSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 # WantedContent view GET POST
 class NaverContentAPIView(generics.ListCreateAPIView):
-    queryset = NaverContent.objects.all()
+    queryset = NaverContent.objects.using('contents').all()
     serializer_class = NaverContentSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     pagination_class = StandardResultPagination
     filter_backends = [SearchFilter, OrderingFilter]
 
     def get_queryset(self, *args, **kwargs):
-        queryset = NaverContent.objects.all().order_by('id')
+        queryset = NaverContent.objects.using('contents').all().order_by('id')
         title_by = self.request.GET.get('title')
         media_by = self.request.GET.get('media')
         type_by = self.request.GET.get('type')
@@ -110,13 +110,13 @@ class NaverContentAPIView(generics.ListCreateAPIView):
 
 # WantedContent view PUT DELETE
 class NaverContentDetailsAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = NaverContent.objects.all()
+    queryset = NaverContent.objects.using('contents').all()
     serializer_class = NaverContentSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 class NaverDataAPIView(generics.ListCreateAPIView):
-    queryset = NaverData.objects.all().order_by('id')
+    queryset = NaverData.objects.using('contents').all().order_by('id')
     serializer_class = NaverDataSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     pagination_class = StandardResultPagination
@@ -125,6 +125,6 @@ class NaverDataAPIView(generics.ListCreateAPIView):
 
 # Wantedurl view PUT DELETE
 class NaverDataDetailsAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = NaverData.objects.all()
+    queryset = NaverData.objects.using('contents').all()
     serializer_class = NaverDataSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
