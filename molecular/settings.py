@@ -18,7 +18,7 @@ else:
 KEY = KEY.encode() # 스트링값 바이트로 변경
 cipher_suite = Fernet(KEY)
 
-ciphered_ip = b'gAAAAABbdkJ4aj8nbCx1OmB5WP2XcuJNKkIWUM25-56WI4Lvm3ZNXYvYqjSiDvVovY2s7ZGs6a8aGWoZ3m2t2bXYtqVfUL80TQ=='
+ciphered_ip = b'gAAAAABbdl0msVTv0ZCE22f7PGl8eOizLrbgydyEIGrWtRFI6uITqMbYny7nV6KqRiIoav6pGoCNihqeXzB6imO_ns0BuJUT8Q=='
 IP_ADDRESS = cipher_suite.decrypt(ciphered_ip).decode()
 
 ciphered_db = b'gAAAAABbcPVvHqEYN9va0lVAKxbx4di8fY8d3rTpeFh3rgnk1zvlGpmKEIsiIHCktNVD7iFS-x9qVfd49Jz9wqX_GtFH4SlrYA=='

@@ -97,4 +97,4 @@ def clean_known_hosts():
 def send_crypt_key():
     # 크립트키 서버로 보내기
     env.user = 'root'
-    put('./avocado/crypt_key.py', '~/AvocadoAPI/avocado/crypt_key.py')
+    put('./molecular/crypt_key.py', '~/Gobble-VA/molecular/crypt_key.py')
