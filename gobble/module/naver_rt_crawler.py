@@ -5,8 +5,9 @@ Created on Fri Aug 17 05:15:30 2018
 @author: LeeMH
 """
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
+import re
 
 from utils.processor_checker import timeit
 
@@ -24,52 +25,39 @@ application = get_wsgi_application()
 
 from contents.models import NaverContent
 
+TODAY = datetime.today().strftime("%Y-%m-%d")
+
+TODAY = datetime.today() - timedelta(days=1)
+TODAY = TODAY.strftime("%Y-%m-%d")
+
 if PRODUCTION == True:
-    all_title = NaverContent.objects.using('contents').filter(data_type="R").values_list('title')
+    all_title = NaverContent.objects.using('contents').filter(data_type="R").filter(upload_time__contains=TODAY).values_list('title')
     CHECKLIST = [a[0] for a in all_title]
 elif PRODUCTION == False:
-    all_title = NaverContent.objects.filter(data_type="R").values_list('title')
+    all_title = NaverContent.objects.filter(data_type="R").filter(upload_time__contains=TODAY).values_list('title')
     CHECKLIST = [a[0] for a in all_title]
 
-# init
-class NaverRealtimeCrawler(object):
+from gobble.module.crawler import Crawler
+
+class NaverRealtimeCrawler(Crawler):
     '''
     네이버 증권 실시간 속보 크롤러
     '''
     def __init__(self):
-        self.today = datetime.today().strftime('%Y%m%d')
-        self.fin_nhn = 'https://finance.naver.com/{}'
-        self.main_today = datetime.today().strftime('%Y-%m-%d')
-        self.main_news = 'https://finance.naver.com/news/mainnews.nhn?date={}'
-        self.real_time_list = 'https://finance.naver.com/news/news_list.nhn?mode=LSS2D&section_id=101&section_id2=258&date={}&page={}'
-        self.user_agent = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'}
-        print("NAVER CRAWLER READY!")
-
-    def request_get(self, url, user_agent):
-        req = requests.get(url, headers= user_agent, auth=('user', 'pass'))
-        return req
-
-    def html_parser(self, req):
-        soup = BeautifulSoup(req.text, 'html.parser')
-        return soup
-    # find & findall
-    def soup_find(self, soup, tags, class_dict=None, func=None):
-        if func == 'all':
-            source = soup.findAll(tags, class_dict)
-        elif func == None:
-            source = soup.find(tags, class_dict)
-        return source
+        super().__init__()
 
     @timeit
     def get_realtimenews_url(self):
-        req = self.request_get(self.real_time_list.format(self.today, 1), self.user_agent)
+        req = self.request_get(self.real_time_list.format(self.rt_today, 1), self.user_agent)
         soup = self.html_parser(req)
         pgRR = self.soup_find(soup, 'td', {'class':'pgRR'})
-        last_page = self.soup_find(pgRR, 'a')['href'][-2:]
+        last_page = self.soup_find(pgRR, 'a')['href'][-3:]
+        last_page = re.findall("\d+", last_page)[0]
+
 
         url_title_data = []
         for i in range(1,int(last_page)):
-            req = self.request_get(self.real_time_list.format(self.today, i), self.user_agent)
+            req = self.request_get(self.real_time_list.format(self.rt_today, i), self.user_agent)
             sub_soup = self.html_parser(req)
             sub_title_dd = self.soup_find(sub_soup, 'dd', {'class':'articleSubject'}, func='all')
             sub_title_dt = self.soup_find(sub_soup, 'dt', {'class':'articleSubject'}, func='all')
