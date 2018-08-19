@@ -123,14 +123,14 @@ class NaverContentAPIView(generics.ListCreateAPIView):
             queryset = NaverContent.objects.all().order_by('id')
         title_by = self.request.GET.get('title')
         media_by = self.request.GET.get('media')
-        type_by = self.request.GET.get('type')
+        data_type_by = self.request.GET.get('data_type')
 
         if title_by:
             queryset = queryset.filter(title=title_by)
         if media_by:
             queryset = queryset.filter(media=media_by)
-        if type_by:
-            queryset = queryset.filter(type=type_by)
+        if data_type_by:
+            queryset = queryset.filter(data_type=data_type_by)
         return queryset
 
 

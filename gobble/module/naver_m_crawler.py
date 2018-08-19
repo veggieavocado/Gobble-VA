@@ -20,9 +20,8 @@ application = get_wsgi_application()
 from contents.models import NaverContent
 from gobble.module.crawler import Crawler
 
-
 TODAY = datetime.today().strftime("%Y-%m-%d")
-TODAY = datetime.today() - timedelta(days=1)
+TODAY = datetime.today() - timedelta(days=2)
 TODAY = TODAY.strftime("%Y-%m-%d")
 
 if PRODUCTION == True:
@@ -41,23 +40,29 @@ class NaverMajorCrawler(Crawler):
         super().__init__()
 
     @timeit
-    def url_get(self):
+    def create_url_list(self, func):
         req = self.request_get(self.main_news.format(self.main_today, 1), self.user_agent)
         soup = self.html_parser(req)
-        pgRR = self.soup_find(soup, 'td', {'class':'pgRR'})
-        last_page = self.soup_find(pgRR, 'a')['href'][-3:]
-        last_page = re.findall("\d+", last_page)[0]
+        url_list = []
+        if func == 'new':
+            url_data = self.find_navernews_url(soup, url_list)
 
-        url_title_data = []
-        for i in range(1,int(last_page)):
-            req = self.request_get(self.main_news.format(self.main_today, i), self.user_agent)
-            sub_soup = self.html_parser(req)
-            sub_title_dd = self.soup_find(sub_soup, 'dd', {'class':'articleSubject'}, func='all')
-            sub_title_dt = self.soup_find(sub_soup, 'dt', {'class':'articleSubject'}, func='all')
-            url_title_data += sub_title_dd
-            url_title_data += sub_title_dt
-        print(len(url_title_data))
-        major_new_url = [self.soup_find(sub, 'a')['href'].replace('§', '&sect') for sub in url_title_data]
+        elif func == 'all':
+            pgRR = self.soup_find(soup, 'td', {'class':'pgRR'})
+            last_page = self.soup_find(pgRR, 'a')['href'][-3:]
+            last_page = re.findall("\d+", last_page)[0]
+
+            sub_list = []
+            for i in range(1,int(last_page)+1):
+                req = self.request_get(self.main_news.format(self.main_today, i), self.user_agent)
+                sub_soup = self.html_parser(req)
+                url_list += self.find_navernews_url(sub_soup, sub_list)
+            url_data = url_list
+        else:
+            print("Choose between 'all' and 'new'")
+        url_data = list(set(url_data))
+        print(len(url_data))
+        major_new_url = [self.soup_find(sub, 'a')['href'].replace('§', '&sect') for sub in url_data]
         return major_new_url
 
     @timeit
@@ -81,9 +86,12 @@ class NaverMajorCrawler(Crawler):
         return data_list
 
 
-def NaverDataSend():
+def NaverDataSend(func):
     nmt = NaverMajorCrawler()
-    nmt_url = nmt.url_get()
+    if func == 'new':
+        nmt_url = nmt.create_url_list(func='new')
+    else:
+        nmt_url = nmt.create_url_list(func='all')
     nmt_data = nmt.get_data(nmt_url, CHECKLIST)
     if len(nmt_data) == 0:
         print('Already up-to-date.')

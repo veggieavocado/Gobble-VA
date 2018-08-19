@@ -52,3 +52,10 @@ class Crawler(object):
         elif func == None:
             source = soup.find(tags, class_dict)
         return source
+
+    def find_navernews_url(self, soup, url_data):
+        sub_url_dd = self.soup_find(soup, 'dd', {'class':'articleSubject'}, func='all')
+        sub_url_dt = self.soup_find(soup, 'dt', {'class':'articleSubject'}, func='all')
+        url_data += sub_url_dd
+        url_data += sub_url_dt
+        return url_data

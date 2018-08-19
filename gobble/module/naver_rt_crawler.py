@@ -47,24 +47,29 @@ class NaverRealtimeCrawler(Crawler):
         super().__init__()
 
     @timeit
-    def get_realtimenews_url(self):
+    def get_realtimenews_url(self, func):
         req = self.request_get(self.real_time_list.format(self.rt_today, 1), self.user_agent)
         soup = self.html_parser(req)
-        pgRR = self.soup_find(soup, 'td', {'class':'pgRR'})
-        last_page = self.soup_find(pgRR, 'a')['href'][-3:]
-        last_page = re.findall("\d+", last_page)[0]
+        url_list = []
+        if func == 'new':
+            url_data = self.find_navernews_url(soup, url_list)
 
+        elif func == 'all':
+            pgRR = self.soup_find(soup, 'td', {'class':'pgRR'})
+            last_page = self.soup_find(pgRR, 'a')['href'][-3:]
+            last_page = re.findall("\d+", last_page)[0]
 
-        url_title_data = []
-        for i in range(1,int(last_page)):
-            req = self.request_get(self.real_time_list.format(self.rt_today, i), self.user_agent)
-            sub_soup = self.html_parser(req)
-            sub_title_dd = self.soup_find(sub_soup, 'dd', {'class':'articleSubject'}, func='all')
-            sub_title_dt = self.soup_find(sub_soup, 'dt', {'class':'articleSubject'}, func='all')
-            url_title_data += sub_title_dd
-            url_title_data += sub_title_dt
-        print(len(url_title_data))
-        real_time_url = [self.soup_find(sub, 'a')['href'].replace('§', '&sect') for sub in url_title_data]
+            sub_list = []
+            for i in range(1,int(last_page)+1):
+                req = self.request_get(self.real_time_list.format(self.rt_today, i), self.user_agent)
+                sub_soup = self.html_parser(req)
+                url_list += self.find_navernews_url(sub_soup, sub_list)
+            url_data = url_list
+        else:
+            print("Choose between 'all' and 'new'")
+        url_data = list(set(url_data))
+        print(len(url_data))
+        real_time_url = [self.soup_find(sub, 'a')['href'].replace('§', '&sect') for sub in url_data]
         return real_time_url
 
     @timeit
@@ -87,9 +92,12 @@ class NaverRealtimeCrawler(Crawler):
         return data_list
 
 
-def NaverDataSend():
+def NaverDataSend(func):
     nrt = NaverRealtimeCrawler()
-    nrt_url = nrt.get_realtimenews_url()
+    if func == 'new':
+        nrt_url = nrt.get_realtimenews_url('new')
+    else:
+        nrt_url = nrt.get_realtimenews_url('all')
     nrt_data = nrt.get_data(nrt_url, CHECKLIST)
     if len(nrt_data) == 0:
         print('Already up-to-date.')
