@@ -10,26 +10,13 @@ import requests
 
 from utils.processor_checker import timeit
 
-import os, sys, glob
-from molecular.settings import PRODUCTION
-
-start_path = os.getcwd()
-proj_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "molecular.settings")
-sys.path.append(proj_path)
-os.chdir(proj_path)
-
-from django.core.wsgi import get_wsgi_application
-application = get_wsgi_application()
-
-
 class Crawler(object):
     '''
     네이버 증권 실시간 속보 크롤러
     '''
     def __init__(self):
-        # self.today = datetime.today()
-        self.today = datetime.today() - timedelta(days=2)
+        # self.today = datetime.today() - timedelta(days=2)
+        self.today = datetime.today()
         self.rt_today = self.today.strftime('%Y%m%d')
         self.main_today = self.today.strftime('%Y-%m-%d')
         self.fin_nhn = 'https://finance.naver.com{}'

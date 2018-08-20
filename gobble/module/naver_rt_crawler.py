@@ -10,34 +10,8 @@ import requests
 import re
 
 from utils.processor_checker import timeit
-
-import os, sys, glob
-from molecular.settings import PRODUCTION
-
-start_path = os.getcwd()
-proj_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "molecular.settings")
-sys.path.append(proj_path)
-os.chdir(proj_path)
-
-from django.core.wsgi import get_wsgi_application
-application = get_wsgi_application()
-
-from contents.models import NaverContent
-
-TODAY = datetime.today().strftime("%Y-%m-%d")
-
-TODAY = datetime.today() - timedelta(days=1)
-TODAY = TODAY.strftime("%Y-%m-%d")
-
-if PRODUCTION == True:
-    all_title = NaverContent.objects.using('contents').filter(data_type="R").filter(upload_time__contains=TODAY).values_list('title')
-    CHECKLIST = [a[0] for a in all_title]
-elif PRODUCTION == False:
-    all_title = NaverContent.objects.filter(data_type="R").filter(upload_time__contains=TODAY).values_list('title')
-    CHECKLIST = [a[0] for a in all_title]
-
 from gobble.module.crawler import Crawler
+
 
 class NaverRealtimeCrawler(Crawler):
     '''
@@ -46,9 +20,11 @@ class NaverRealtimeCrawler(Crawler):
     def __init__(self):
         super().__init__()
 
+    # func (기능): all (오늘 날짜의 모든 뉴스를 크롤링), new (1page만 크롤링)
     @timeit
-    def get_realtimenews_url(self, func):
+    def create_url_list(self, func):
         req = self.request_get(self.real_time_list.format(self.rt_today, 1), self.user_agent)
+        print(self.real_time_list.format(self.rt_today, 1))
         soup = self.html_parser(req)
         url_list = []
         if func == 'new':
@@ -81,34 +57,12 @@ class NaverRealtimeCrawler(Crawler):
             soup = self.html_parser(self.req)
             url = self.fin_nhn.format(url)
             title = self.soup_find(soup, 'h3').text.replace('\n','').replace('\t','').strip()
-            upload_time = self.soup_find(soup, 'span', {'class':'article_date'}).text
-            if title in checklist:
+            if url in checklist:
                 print('Already up-to-date.')
                 continue
+            upload_time = self.soup_find(soup, 'span', {'class':'article_date'}).text
             media = self.soup_find(soup, 'span', {'class':'press'}).img['title']
             data_dict = {'title':title, 'media':media, 'url':url, 'data_type':'R', 'upload_time': upload_time}
             data_list.append(data_dict)
         print(len(data_list))
         return data_list
-
-
-def NaverDataSend(func):
-    nrt = NaverRealtimeCrawler()
-    if func == 'new':
-        nrt_url = nrt.get_realtimenews_url('new')
-    else:
-        nrt_url = nrt.get_realtimenews_url('all')
-    nrt_data = nrt.get_data(nrt_url, CHECKLIST)
-    if len(nrt_data) == 0:
-        print('Already up-to-date.')
-    else:
-        for nrt_part in nrt_data:
-            title = nrt_part['title']
-            url = nrt_part['url']
-            upload_time = nrt_part['upload_time']
-            media = nrt_part['media']
-            data_type = nrt_part['data_type']
-            naver_content_orm = NaverContent(title=title, url=url, upload_time=upload_time,\
-                                            media=media, data_type=data_type)
-            naver_content_orm.save()
-        print('DB Send Success')

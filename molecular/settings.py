@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     # 몰레큘러 앱 정의내리는 곳
     'algorithms',
     'contents',
+    'gobble',
 ]
 
 ### Sentry 새팅 ###
