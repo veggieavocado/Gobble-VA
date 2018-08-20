@@ -26,6 +26,9 @@ IP_ADDRESS = cipher_suite.decrypt(ciphered_ip).decode()
 ciphered_db = b'gAAAAABbcPVvHqEYN9va0lVAKxbx4di8fY8d3rTpeFh3rgnk1zvlGpmKEIsiIHCktNVD7iFS-x9qVfd49Jz9wqX_GtFH4SlrYA=='
 DB_ADDRESS = cipher_suite.decrypt(ciphered_db).decode()
 
+ciphered_token = b'gAAAAABbej7kBf2aKz1fzhRwpbmODwCSCmmEb0kDcY-Qoys0OmeCE-dB7b7m9OrJPpYB9E04etnWwgwnX0ytOh1lECquIfXWU_c0xTQNl__1PGJhnWJTM50='
+API_TOKEN = cipher_suite.decrypt(ciphered_token).decode()
+
 ALLOWED_HOSTS = ['127.0.0.1', '127.0.1.1', IP_ADDRESS]
 
 INSTALLED_APPS = [
