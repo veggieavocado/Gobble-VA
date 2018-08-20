@@ -9,7 +9,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'fv($0e1to(r8ddlr4e802nl7i#42sm0k8b(mc-4oor8el%^z-p'
 DEBUG = True
 
-PRODUCTION = False
+PRODUCTION = True
 
 if TESTING == 'True':
     # Travis 테스트 작동 중이면, 시크릿 키가 없기 때문에 비밀 환경변수 사용
@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 
     # 몰레큘러 앱 정의내리는 곳
     'algorithms',
+    'api',
     'contents',
     'gobble',
 ]
