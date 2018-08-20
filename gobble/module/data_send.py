@@ -65,5 +65,8 @@ def NaverDataSend(func, new_type):
                                                 media=media, data_type=data_type)
             else:
                 print("major와 rt 중에 선택하시오.")
-            naver_content_orm.save()
+            if PRODUCTION == True:
+                naver_content_orm.using('contents').save()
+            else:
+                naver_content_orm.save()
         print('DB Send Success')
